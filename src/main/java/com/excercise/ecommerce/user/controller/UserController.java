@@ -1,0 +1,58 @@
+package com.excercise.ecommerce.user.controller;
+
+import com.excercise.ecommerce.user.dto.*;
+import com.excercise.ecommerce.user.service.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
+public class UserController {
+
+    private final UserService userService;
+
+    @PostMapping("/register")
+    public ResponseEntity<UserRegisterResponseDTO> register(
+            @Valid @RequestBody UserRegisterRequestDTO userRegisterRequestDTO
+    ) {
+        UserRegisterResponseDTO user = userService.signUp(userRegisterRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserLoginResponseDTO> login(
+            @Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO
+    ) {
+        UserLoginResponseDTO user = userService.login(userLoginRequestDTO);
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileResponseDTO> getMyProfile(Authentication authentication) {
+        String email = authentication.getName(); // Email del JWT
+        UserProfileResponseDTO user = userService.getProfileByEmail(email);
+        return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteMyAccount(Authentication authentication) {
+        String email = authentication.getName(); // Email del JWT
+        userService.deleteProfileByEmail(email); // ← Cambio aquí
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserUpdateResponseDTO> updateMyProfile(
+            Authentication authentication,
+            @Valid @RequestBody UserUpdateRequestDTO user
+    ) {
+        String email = authentication.getName(); // Email del JWT
+        UserUpdateResponseDTO response = userService.updateProfileByEmail(email, user);
+        return ResponseEntity.ok(response);
+    }
+}
