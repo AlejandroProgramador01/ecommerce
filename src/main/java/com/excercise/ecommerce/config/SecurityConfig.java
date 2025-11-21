@@ -21,14 +21,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**", "/h2-console").permitAll()
-                        .requestMatchers("/api/users/register").permitAll()  // ← Plural
-                        .requestMatchers("/api/users/login").permitAll()     // ← Plural
+
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+
+                        .requestMatchers("/api/products/**").authenticated()
+                        .requestMatchers("/api/categories/**").authenticated()
+
                         .anyRequest().authenticated()
                 )
-                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -38,3 +41,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
+

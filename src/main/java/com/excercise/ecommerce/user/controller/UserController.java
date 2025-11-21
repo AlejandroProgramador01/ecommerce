@@ -17,42 +17,37 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserRegisterResponseDTO> register(
-            @Valid @RequestBody UserRegisterRequestDTO userRegisterRequestDTO
-    ) {
-        UserRegisterResponseDTO user = userService.signUp(userRegisterRequestDTO);
+    public ResponseEntity<UserRegisterResponseDTO> register(@Valid @RequestBody UserRegisterRequestDTO dto) {
+        UserRegisterResponseDTO user = userService.signUp(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponseDTO> login(
-            @Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO
-    ) {
-        UserLoginResponseDTO user = userService.login(userLoginRequestDTO);
+    public ResponseEntity<UserLoginResponseDTO> login(@Valid @RequestBody UserLoginRequestDTO dto) {
+        UserLoginResponseDTO user = userService.login(dto);
         return ResponseEntity.ok(user);
     }
 
     @GetMapping("/me")
     public ResponseEntity<UserProfileResponseDTO> getMyProfile(Authentication authentication) {
-        String email = authentication.getName(); // Email del JWT
+        String email = authentication.getName();
         UserProfileResponseDTO user = userService.getProfileByEmail(email);
         return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/me")
     public ResponseEntity<Void> deleteMyAccount(Authentication authentication) {
-        String email = authentication.getName(); // Email del JWT
-        userService.deleteProfileByEmail(email); // ← Cambio aquí
+        String email = authentication.getName();
+        userService.deleteProfileByEmail(email);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/me")
     public ResponseEntity<UserUpdateResponseDTO> updateMyProfile(
-            Authentication authentication,
-            @Valid @RequestBody UserUpdateRequestDTO user
+            Authentication authentication, @Valid @RequestBody UserUpdateRequestDTO dto
     ) {
-        String email = authentication.getName(); // Email del JWT
-        UserUpdateResponseDTO response = userService.updateProfileByEmail(email, user);
-        return ResponseEntity.ok(response);
+        String email = authentication.getName();
+        UserUpdateResponseDTO user = userService.updateProfileByEmail(email, dto);
+        return ResponseEntity.ok(user);
     }
 }

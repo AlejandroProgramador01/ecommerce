@@ -1,11 +1,13 @@
 package com.excercise.ecommerce.user.entity;
 
+import com.excercise.ecommerce.product.entity.QualificationEntity;
+import com.excercise.ecommerce.user.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -14,10 +16,15 @@ import java.time.LocalDateTime;
 public class UserEntity {
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
     @Email
     @Column(nullable = false, unique = true)
     private String email;
     private String username;
     private String password;
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
+    @OneToMany(mappedBy = "user")
+    private List<QualificationEntity> qualifications;
 }
