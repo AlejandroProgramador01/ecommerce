@@ -29,6 +29,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/products/**").authenticated()
                         .requestMatchers("/api/categories/**").authenticated()
+                        .requestMatchers("/api/qualifications/**").authenticated()
 
                         .anyRequest().authenticated()
                 )

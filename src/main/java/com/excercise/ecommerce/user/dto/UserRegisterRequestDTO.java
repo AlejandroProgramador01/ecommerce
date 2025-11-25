@@ -1,5 +1,8 @@
 package com.excercise.ecommerce.user.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +13,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserRegisterRequestDTO {
+    @NotBlank(message = "El correo es obligatorio")
+    @Email(message = "Debe ingresar un correo válido")
     private String email;
+    @NotBlank(message = "El nombre de usuario es obligatorio")
     private String username;
+    @NotBlank(message = "La contraseña es obligatoria")
     private String password;
 }

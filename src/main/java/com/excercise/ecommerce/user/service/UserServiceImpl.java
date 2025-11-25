@@ -13,7 +13,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 
 @Service
@@ -54,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserProfileResponseDTO getProfileByEmail(String email) {
+    public UserProfileResponseDTO getProfile(String email) {
         UserEntity userEntity = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("El usuario no existe"));
         return userMapper.mapToProfileResponseDTO(userEntity);
@@ -62,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteProfileByEmail(String email) {
+    public void deleteProfile(String email) {
         UserEntity userEntity = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("El usuario no existe"));
         userRepository.delete(userEntity);
@@ -70,16 +69,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserUpdateResponseDTO updateProfileByEmail(String email, UserUpdateRequestDTO dto) {
+    public UserUpdateResponseDTO updateProfile(String email, UserUpdateRequestDTO dto) {
         UserEntity userEntity = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("El usuario no existe"));
-        if (
-                dto.getUsername() != null && !dto.getUsername().isBlank()
-                        && dto.getPassword() != null && !dto.getPassword().isBlank()
-        ) {
-            userEntity.setUsername(dto.getUsername());
-            userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
-        }
+        userEntity.setUsername(dto.getUsername());
+        userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userEntity.setStatus(dto.getStatus());
         UserEntity user = userRepository.save(userEntity);
         return userMapper.mapToUpdateProfileDTO(user);
     }
