@@ -37,17 +37,15 @@ public class ProductServiceImpl implements ProductService {
         }
         CategoryEntity category = categoryRepository.findById(dto.getCategoryId())
                 .orElseThrow(() -> new NotFoundException("La categoría no existe"));
-        ProductEntity product = productMapper.mapToProductEntityFromCreate(dto);
+        ProductEntity product = productMapper.mapToProductEntity(dto);
         product.setCategory(category);
-        product.setStatus(ProductStatus.AVAILABLE);
-        if (dto.getAttributes() != null && !dto.getAttributes().isEmpty()) {
-            List<ProductAttributeEntity> attributes = dto.getAttributes()
-                    .stream()
-                    .map(attributeMapper::mapToProductAttributeEntity)
-                    .peek(attr -> attr.setProduct(product))
-                    .toList();
-            product.getAttributes().addAll(attributes);
-        }
+        product.setStatus(ProductStatus.UNAVAILABLE);
+        List<ProductAttributeEntity> attributes = dto.getAttributes()
+                .stream()
+                .map(attributeMapper::mapToProductAttributeEntity)
+                .peek(attr -> attr.setProduct(product))
+                .toList();
+        product.getAttributes().addAll(attributes);
         ProductEntity saved = productRepository.save(product);
         return productMapper.mapToProductResponseDTO(saved);
     }
@@ -57,24 +55,20 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponseDTO updateProduct(Long id, ProductUpdateRequestDTO dto) {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("El producto no existe"));
-        if (dto.getName() != null) product.setName(dto.getName());
-        if (dto.getDescription() != null) product.setDescription(dto.getDescription());
-        if (dto.getPrice() != null) product.setPrice(dto.getPrice());
-        if (dto.getStatus() != null) product.setStatus(dto.getStatus());
-        if (dto.getCategoryId() != null) {
-            CategoryEntity category = categoryRepository.findById(dto.getCategoryId())
+        product.setName(dto.getName());
+        product.setDescription(dto.getDescription());
+        product.setPrice(dto.getPrice());
+        product.setStatus(dto.getStatus());
+        CategoryEntity category = categoryRepository.findById(dto.getCategoryId())
                     .orElseThrow(() -> new NotFoundException("La categoría no existe"));
-            product.setCategory(category);
-        }
-        if (dto.getAttributes() != null) {
-            product.getAttributes().clear();
-            List<ProductAttributeEntity> updatedAttributes = dto.getAttributes()
-                    .stream()
-                    .map(attributeMapper::mapToProductAttributeEntity)
-                    .peek(attr -> attr.setProduct(product))
-                    .toList();
-            product.getAttributes().addAll(updatedAttributes);
-        }
+        product.setCategory(category);
+        product.getAttributes().clear();
+        List<ProductAttributeEntity> updatedAttributes = dto.getAttributes()
+                .stream()
+                .map(attributeMapper::mapToProductAttributeEntity)
+                .peek(attr -> attr.setProduct(product))
+                .toList();
+        product.getAttributes().addAll(updatedAttributes);
         productRepository.save(product);
         return productMapper.mapToProductResponseDTO(product);
     }
@@ -92,7 +86,6 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long id) {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("El producto no existe"));
-
         productRepository.delete(product);
     }
 }

@@ -19,4 +19,6 @@ public class QualificationResponseDTO {
     private LocalDateTime updatedAt;
     private Long userId;
     private String userName;
+    private String ProductId;
+    private String ProductName;
 }

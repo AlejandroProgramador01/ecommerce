@@ -10,5 +10,5 @@ import org.mapstruct.Mapper;
 public interface CategoryMapper {
     CategoryListItemDTO mapToCategoryListItemDTO(CategoryEntity categoryEntity);
     CategoryResponseDTO mapToCategoryResponseDTO(CategoryEntity categoryEntity);
-    CategoryEntity mapToCategoryEntityFromRequest(CategoryCreateRequestDTO categoryCreateRequestDTO);
+    CategoryEntity mapToCategoryEntity(CategoryCreateRequestDTO categoryCreateRequestDTO);
 }

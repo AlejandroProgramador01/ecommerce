@@ -31,14 +31,14 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserProfileResponseDTO> getMyProfile(Authentication authentication) {
         String email = authentication.getName();
-        UserProfileResponseDTO user = userService.getProfileByEmail(email);
+        UserProfileResponseDTO user = userService.getProfile(email);
         return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/me")
     public ResponseEntity<Void> deleteMyAccount(Authentication authentication) {
         String email = authentication.getName();
-        userService.deleteProfileByEmail(email);
+        userService.deleteProfile(email);
         return ResponseEntity.noContent().build();
     }
 
@@ -47,7 +47,7 @@ public class UserController {
             Authentication authentication, @Valid @RequestBody UserUpdateRequestDTO dto
     ) {
         String email = authentication.getName();
-        UserUpdateResponseDTO user = userService.updateProfileByEmail(email, dto);
+        UserUpdateResponseDTO user = userService.updateProfile(email, dto);
         return ResponseEntity.ok(user);
     }
 }

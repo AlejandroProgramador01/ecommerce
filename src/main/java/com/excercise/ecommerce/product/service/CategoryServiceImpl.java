@@ -27,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService{
         if (categoryRepository.existsByName(dto.getName())) {
             throw new DuplicateException("La categoría ya existe");
         }
-        CategoryEntity category = categoryMapper.mapToCategoryEntityFromRequest(dto);
+        CategoryEntity category = categoryMapper.mapToCategoryEntity(dto);
         categoryRepository.save(category);
         return categoryMapper.mapToCategoryResponseDTO(category);
     }
@@ -36,12 +36,8 @@ public class CategoryServiceImpl implements CategoryService{
     public CategoryResponseDTO updateCategory(Long id, CategoryUpdateRequestDTO dto) {
         CategoryEntity category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("La categoría no existe"));
-        if(dto.getName() != null) {
-            category.setName(dto.getName());
-        }
-        if(dto.getDescription() != null) {
-            category.setDescription(dto.getDescription());
-        }
+        category.setName(dto.getName());
+        category.setDescription(dto.getDescription());
         category.setId(id);
         CategoryEntity updated = categoryRepository.save(category);
         return categoryMapper.mapToCategoryResponseDTO(updated);
